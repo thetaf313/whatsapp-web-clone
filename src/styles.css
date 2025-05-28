@@ -1,0 +1,22 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+* {
+  @apply box-border;
+  margin: 0;
+  padding: 0;
+  font-family: 'Inter', sans-serif;
+}
+
+html {
+    font-size: 16px;
+}
+
+.active-menu {
+    @apply bg-yellow-500;
+}
+
+.active-contact {
+    @apply border-2 border-yellow-500;
+}

@@ -1,0 +1,199 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <link rel="icon" type="image/svg+xml" href="/vite.svg" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Vite App</title>
+    <link
+      rel="stylesheet"
+      href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.7.2/css/all.min.css"
+      integrity="sha512-Evv84Mr4kqVGRNSgIGL/F/aIDqQb7xQ2vcrdIwxfjThSH8CSR7PBEakCr51Ck+w+/U6swU2Im1vVX0SVk9ABhg=="
+      crossorigin="anonymous"
+      referrerpolicy="no-referrer"
+    />
+  </head>
+  <body class="h-screen bg-white flex justify-center items-center">
+    <div
+      id="app"
+      class="w-[94%] h-[94%] border shadow-[0_0_15px_0px] shadow-gray-400 flex"
+    >
+      <section
+        id="sidebar"
+        class="w-24 h-full bg-[#dec18f26] flex flex-col justify-center items-center"
+      >
+        <ul
+          id="menu"
+          class="list-none flex flex-wrap gap-3 justify-center text-xs p-1"
+        >
+          <li
+            class="flex flex-col justify-center items-center border-2 border-yellow-500 rounded-lg p-4 cursor-pointer w-full active-menu"
+          >
+            <span><i class="fa-solid fa-message fa-xl"></i></span>
+            <span>Messages</span>
+          </li>
+          <li
+            class="flex flex-col justify-center items-center border-2 border-yellow-500 rounded-lg p-4 cursor-pointer w-full"
+          >
+            <span><i class="fa-solid fa-user-group fa-xl"></i></span>
+            <span>Groupes</span>
+          </li>
+          <li
+            class="flex flex-col justify-center items-center border-2 border-yellow-500 rounded-lg p-4 cursor-pointer w-full"
+          >
+            <span><i class="fa-solid fa-arrows-turn-to-dots fa-xl"></i></span>
+            <span>Diffusions</span>
+          </li>
+          <li
+            class="flex flex-col justify-center items-center border-2 border-yellow-500 rounded-lg p-4 cursor-pointer w-full"
+          >
+            <span>
+              <i class="fa-solid fa-box-archive fa-xl"></i>
+            </span>
+            <span>Archives</span>
+          </li>
+          <li
+            class="flex flex-col justify-center items-center border-2 border-yellow-500 rounded-lg p-4 cursor-pointer w-full"
+          >
+            <span><i class="fa-solid fa-plus fa-xl"></i></span>
+            <span>Nouveau</span>
+          </li>
+        </ul>
+      </section>
+
+      <section id="page" class="w-[30rem] h-full bg-[#fdffff] p-4">
+        <div
+          id="pageHeader"
+          class="flex justify-between items-center border-b border-[#f4f4f4be] pb-1 mb-2"
+        >
+          <h1 class="text-lg">Discussions</h1>
+          <div class="actions flex gap-2">
+            <span id="newDiscussion" class="cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill=""
+                  d="M12.75 7.75a.75.75 0 0 0-1.5 0v3.5h-3.5a.75.75 0 0 0 0 1.5h3.5v3.5a.75.75 0 0 0 1.5 0v-3.5h3.5a.75.75 0 0 0 0-1.5h-3.5zM22 12c0-5.523-4.477-10-10-10S2 6.477 2 12a9.96 9.96 0 0 0 1.115 4.592l-1.068 3.823a1.25 1.25 0 0 0 1.54 1.54l3.826-1.067A9.96 9.96 0 0 0 12 22c5.523 0 10-4.477 10-10M3.5 12a8.5 8.5 0 1 1 4.367 7.43l-.27-.15l-3.986 1.111l1.113-3.984l-.151-.27A8.46 8.46 0 0 1 3.5 12"
+                />
+              </svg>
+            </span>
+            <span id="contextMenu" class="cursor-pointer">
+              <svg
+                xmlns="http://www.w3.org/2000/svg"
+                width="24"
+                height="24"
+                viewBox="0 0 24 24"
+              >
+                <path
+                  fill=""
+                  d="M12 7a2 2 0 1 0-2-2a2 2 0 0 0 2 2m0 10a2 2 0 1 0 2 2a2 2 0 0 0-2-2m0-7a2 2 0 1 0 2 2a2 2 0 0 0-2-2"
+                />
+              </svg>
+            </span>
+          </div>
+        </div>
+        <div
+          class="search flex justify-center items-center gap-2 border rounded-full"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill=""
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14"
+            />
+          </svg>
+          <input
+            type="text"
+            name=""
+            id=""
+            class="flex-1 p-1 border-inherit focus:outline-none"
+            placeholder="Recherche"
+          />
+        </div>
+        <!-- composant ici -->
+      </section>
+
+      <section id="content" class="w-[60%] h-full bg-white flex flex-col gap-1">
+        <div
+          id="contentHeader"
+          class="flex justify-between bg-[#dec18f47] px-2"
+        >
+          <div class="profile flex gap-2">
+            <img
+              src="/assets/user-group.svg"
+              alt="A picture of a group"
+              class="w-12 h-12 rounded-full bg-red-500"
+            />
+            <div class="profile-info">
+              <div id="title" class="">P7 Dev Web</div>
+              <div id="description" class="text-sm">
+                name1, name2, name3, name4, name5, name6, name7, name8, name9,
+                ...
+              </div>
+            </div>
+          </div>
+          <div id="actions" class="flex gap-2 p-1">
+            <span
+              id=""
+              class="w-8 h-8 rounded-full border border-[#dfb346] flex justify-center items-center cursor-pointer"
+            >
+                <i class="fa-solid fa-delete-left text-orange-400"></i>
+            </span>
+            <span
+              id="archiveBtn"
+              class="w-8 h-8 rounded-full border border-gray-400 flex justify-center items-center cursor-pointer"
+            >
+              <i class="fa-solid fa-box-archive text-gray-400"></i>
+            </span>
+            <span
+              class="w-8 h-8 rounded-full border border-black flex justify-center items-center cursor-pointer"
+            >
+              <i class="fa-solid fa-stop text-black"></i>
+            </span>
+            <span
+              class="w-8 h-8 rounded-full border border-red-700 flex justify-center items-center cursor-pointer"
+            >
+              <i class="fa-solid fa-trash text-red-700"></i>
+            </span>
+          </div>
+        </div>
+
+        <div id="contentBody" class="bg-[#dec18f47] flex-1"></div>
+
+        <div id="contentFooter" class="flex justify-between gap-2 p-2">
+          <input
+            type="text"
+            name=""
+            id=""
+            class="text-sm pl-2 flex-1 border border-gray-400 bg-gray-200 rounded-lg focus:outline-none"
+          />
+          <span
+            id="sendBtn"
+            class="bg-green-500 w-10 h-10 rounded-full flex justify-center items-center cursor-pointer"
+          >
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              width="24"
+              height="24"
+              viewBox="0 0 32 32"
+            >
+              <path
+                fill="#fff"
+                d="m18.72 6.78l-1.44 1.44L24.063 15H4v2h20.063l-6.782 6.78l1.44 1.44l8.5-8.5l.686-.72l-.687-.72z"
+              />
+            </svg>
+          </span>
+        </div>
+      </section>
+    </div>
+    <script type="module" src="/src/main.js"></script>
+  </body>
+</html>
