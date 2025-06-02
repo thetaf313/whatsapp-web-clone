@@ -293,12 +293,12 @@ export function renderContactDetails(contact) {
     return `<p class="text-gray-500">Aucun contact sélectionné.</p>`;
   }
   // If contact is provided, render the details
-  content.innerHTML += renderContactDetailsContent(contact);
+  // content.innerHTML += renderContactDetailsContent(contact);
   // Add event listeners for buttons
-  document.querySelector("#btnEditContact").addEventListener("click", () => {
-    // Logic to edit contact
-    console.log("Edit contact:", contact.id);
-  });
+  // document.querySelector("#btnEditContact").addEventListener("click", () => {
+  //   // Logic to edit contact
+  //   console.log("Edit contact:", contact.id);
+  // });
 
   document.querySelector("#archiveBtn").addEventListener("click", () => {
     // Logic to archive contact
@@ -306,14 +306,14 @@ export function renderContactDetails(contact) {
     toggleArchive(contact.id);
   });
 
-  document.querySelector("#btnArchiveContact").addEventListener("click", () => {
-    // Logic to archive contact
-    console.log("Archive contact:", contact.id);
-  });
-  document.querySelector("#btnDeleteContact").addEventListener("click", () => {
-    // Logic to delete contact
-    console.log("Delete contact:", contact.id);
-  });
+  // document.querySelector("#btnArchiveContact").addEventListener("click", () => {
+  //   // Logic to archive contact
+  //   console.log("Archive contact:", contact.id);
+  // });
+  // document.querySelector("#btnDeleteContact").addEventListener("click", () => {
+  //   // Logic to delete contact
+  //   console.log("Delete contact:", contact.id);
+  // });
   // document.querySelector("#contactMenuBtn").addEventListener("click", () => {
   //   // Logic to show contact menu
   //   console.log("Show contact menu for:", contact.id);
