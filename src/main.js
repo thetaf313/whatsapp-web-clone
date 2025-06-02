@@ -1,8 +1,11 @@
 import "./styles.css";
 import { contacts, groups } from "./data.js";
 import {
+  renderAddGroupMembers,
   renderArchived,
+  renderContactDetails,
   renderContactsList,
+  renderGroupDetails,
   renderGroupsList,
 } from "./components.js";
 import { showError, clearErrors, randomColor, getInitials } from "./utils.js";
@@ -27,6 +30,7 @@ function loadView(view) {
     case "groupes":
       page.innerHTML = `<h2 class="text-xl font-bold mb-4">Groupes</h2>
         ${renderGroupsList(groups, contacts)}`;
+      groupListeners();
       document
         .getElementById("btnAddGroup")
         .addEventListener("click", loadAddGroupForm);
@@ -136,7 +140,7 @@ function loadAddContactForm() {
 //         class="p-2 border border-gray-300 w-full rounded focus:outline-none" />
 //         <div class="error-message text-red-500 text-sm mt-1" data-error-for="name"></div>
 //       </div>
-      
+
 //       <input type="text" id="groupDescription" placeholder="Description"
 //         class="p-2 border border-gray-300 rounded focus:outline-none" />
 //       <label class="font-medium">Membres :</label>
@@ -160,11 +164,11 @@ function loadAddContactForm() {
 //                       : `
 //                     <span class="flex justify-center items-center w-10 h-10 rounded-full bg-gray-200 text-sm">${c.profile}</span>`
 //                   }
-                  
+
 //                     <div class="font-semibold">${c.firstName} ${
 //               c.lastName
 //             }</div>
-            
+
 //             </div>
 //           `
 //           )
@@ -272,7 +276,9 @@ function loadAddGroupForm() {
   document.getElementById("addGroupForm").addEventListener("submit", (e) => {
     e.preventDefault();
     const name = document.getElementById("groupName").value.trim();
-    const description = document.getElementById("groupDescription").value.trim();
+    const description = document
+      .getElementById("groupDescription")
+      .value.trim();
     const selected = Array.from(
       document.querySelectorAll("#groupMembers input:checked")
     ).map((el) => parseInt(el.value));
@@ -308,7 +314,6 @@ function loadAddGroupForm() {
     setTimeout(() => loadView("groupes"), 1000);
   });
 }
-
 
 function setupFormHandlers() {
   const contactForm = document.getElementById("addContactForm");
@@ -414,12 +419,61 @@ function contactListeners() {
       item.classList.add("active-contact");
       selectedContactId = parseInt(item.dataset.id);
       console.log("Contact sélectionné :", selectedContactId);
+      const contact = contacts.find((c) => c.id === selectedContactId);
+      renderContactDetails(contact);
     });
   });
   contentListeners();
 }
 
-function toggleArchive(contactId) {
+function groupListeners() {
+  document.querySelectorAll(".group-item").forEach((item) => {
+    item.addEventListener("click", () => {
+      document
+        .querySelectorAll(".group-item")
+        .forEach((el) => {
+          el.classList.remove("active-group");
+        });
+      
+      item.classList.add("active-group");
+      item.querySelector("#addMembers").addEventListener("click", (e) => {
+        e.stopPropagation();
+        console.log("Ajouter des membres au groupe");
+        const groupId = parseInt(item.dataset.id);
+        const group = groups.find((g) => g.id === groupId);
+        renderAddGroupMembers(groupId, contacts)
+      });
+
+      const groupId = parseInt(item.dataset.id);
+      console.log("Groupe sélectionné :", groupId);
+      const group = groups.find((g) => g.id === groupId);
+      renderGroupDetails(group);
+      // if (group) {
+      //   page.innerHTML = `
+      //     <h2 class="text-xl font-bold mb-4">${group.name}</h2>
+      //     <p class="text-sm text-gray-500">${group.description}</p>
+      //     <div class="mt-4">
+      //       <h3 class="font-semibold mb-2">Membres :</h3>
+      //       <ul class="list-disc pl-5">
+      //         ${group.members
+      //           .map(
+      //             (memberId) =>
+      //               `<li>${
+      //                 contacts.find((c) => c.id === memberId).firstName
+      //               }</li>`
+      //           )
+      //           .join("")}
+      //       </ul>
+      //     </div>
+      //   `;
+      // } else {
+      //   page.innerHTML = `<p>Groupe non trouvé.</p>`;
+      // }
+    });
+  });
+}
+
+export function toggleArchive(contactId) {
   const contact = contacts.find((c) => c.id === contactId);
   if (contact) {
     contact.archived = !contact.archived;
