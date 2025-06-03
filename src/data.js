@@ -1,4 +1,19 @@
 //
+
+// const currentUser = {
+//   id: 1,
+//   firstName: "John",
+//   lastName: "Doe",
+//   email: "johndoe@gmail.com",
+//   phoneNumber: "+221 78 389 42 17",
+//   profile: "JD",
+//   avatar: "",
+//   color: "#f7f7f7",
+//   archived: false,
+//   createdAt: "2025-05-28T10:00:00Z",
+// }
+export const currentUser = {};
+
 export const contacts = [
   {
     id: 1,
@@ -52,14 +67,16 @@ export const groups = [
     name: "Projet Web",
     members: [1, 2],
     description: "Discussions sur le projet HTML/CSS/JS",
-    picture: "../assets/user-group.svg"
+    picture: "",
+    archived: false
   },
   {
     id: 2,
     name: "Famille",
     members: [2, 3],
     description: "Groupe familial",
-    picture: "../assets/user-group.svg"
+    picture: "",
+    archived: false
   },
 ];
 

@@ -1,13 +1,13 @@
-import { contacts, groups } from "./data";
-import { toggleArchive } from "./main";
-import { showError } from "./utils";
+import { contacts, groups } from "./data.js";
+import { loadView, toggleArchive, toggleArchiveGroup } from "./main.js";
+import { showError } from "./utils.js";
 
-export function renderContactsList(contacts, messages) {
+export function renderContactsList(contacts) {
   if (!contacts || contacts.length === 0) {
     return `<p class="text-gray-500">Aucun contact trouvé.</p>`;
   }
   // Sort contacts by first name
-  contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
+  // contacts.sort((a, b) => a.firstName.localeCompare(b.firstName));
   // Generate HTML for each contact
   const filteredContacts = contacts.filter((c) => !c.archived);
   if (filteredContacts.length === 0) {
@@ -73,10 +73,7 @@ export function renderContactsList(contacts, messages) {
                     
                     </div>
                     <div>
-                    <span class="text-xs text-gray-500">${c.infos.slice(
-                      0,
-                      20
-                    )}...</span>
+                    <span class="text-xs text-gray-500">${c.infos.length > 20 ? c.infos.slice(0, 20) + '...' : c.infos || ""}</span>
                       <span class="hidden hover:block"><i class="fa-solid fa-chevron-down"></i></span>
                     </div>
                   </div>
@@ -104,6 +101,8 @@ export function renderGroupsList(groups, contacts) {
       </li>
 
       ${groups
+        .filter((g) => !g.archived)
+        .sort((a, b) => a.name.localeCompare(b.name))
         .map((g) => {
           const memberNames = g.members
             .map((id) => contacts.find((c) => c.id === id)?.firstName)
@@ -115,7 +114,7 @@ export function renderGroupsList(groups, contacts) {
               ${
                 g.pic
                   ? `<img src="/assets/${g.picture}" alt="${g.name}" class="w-12 h-12 rounded-full" />`
-                  : `<span class="flex justify-center items-center w-12 h-12 rounded-full bg-gray-200 text-sm font-bold uppercase">${g.name.slice(
+                  : `<span class="flex justify-center items-center w-12 h-12 rounded-[50%] bg-gray-200 text-sm font-bold uppercase">${g.name.slice(
                       0,
                       2
                     )}</span>`
@@ -129,7 +128,9 @@ export function renderGroupsList(groups, contacts) {
                   <span id="addMembers" class="hidden"><i class="fa-solid fa-user-plus"></i></span>
                 </div>
                 <span class="text-xs text-gray-500 italic">${
-                  g.description
+                  g.description.length > 25
+                    ? g.description.slice(0, 25) + "..."
+                    : g.description
                 }</span>
               </div>
             </li>
@@ -177,7 +178,8 @@ export function renderArchived() {
             placeholder="Recherche"
           />
         </div>
-          <hr>
+        <div id="archivedGroups" class="p-2 my-2 rounded-lg bg-orange-100 hover:bg-orange-200 cursor-pointer"><i class="fa-solid fa-group fa-lg"></i>Groupes</div>
+          <hr class="my-2">
           <div class="flex flex-col gap-3 my-3">
             ${archived
               .map(
@@ -207,6 +209,118 @@ export function renderArchived() {
               </div>
             `
               )
+              .join("")}
+          </div>
+        `;
+}
+
+export function renderArchivedGroupsEvent(groups) {
+  document.querySelector("#archivedGroups").addEventListener("click", () => {
+    const page = document.querySelector("#page");
+    page.innerHTML = renderArchivedGroups(groups, contacts);
+    // Add event listeners for unarchive buttons
+    document.querySelectorAll("#unarchiveBtn").forEach((btn) => {
+      btn.addEventListener("click", (e) => {
+        e.stopPropagation(); // Prevent the click from propagating to the group item
+        const groupId = btn.closest(".group-item").dataset.id;
+        const group = groups.find((g) => g.id === groupId);
+        if (groupId) {
+          console.log("Unarchive group:", groupId);
+          groups.forEach((g) => {
+            if (g.id === groupId) {
+              g.archived = false; // Unarchive the group
+              return;
+            }
+          }); // Update the group's archived status
+
+          // if (!group) {
+          //   console.error("Group not found:", groupId);
+          //   return;
+          // }
+          // group.archived = !group.archived; // Unarchive the group
+          
+
+          console.log("Unarchiving group:", group);
+
+          const groupItem = e.target.closest(".group-item");
+          // const groupItem = btn.closest(".group-item");
+          groupItem.remove(); // Remove the group item from the list
+          // Optionally, you can show a success message or update the UI
+          loadView("groupes");
+        }
+      });
+    });
+  });
+}
+
+export function renderArchivedGroups(groups, contacts) {
+  const archivedGroups = groups.filter((g) => g.archived);
+  if (!archivedGroups || archivedGroups.length === 0) {
+    return `<p class="text-gray-500">Aucun groupe trouvé.</p>`;
+  }
+
+  return `
+      <div 
+        id="pageHeader"
+        class="flex justify-between items-center border-b border-[#f4f4f4be] pb-1 mb-2">
+          <h1 class="text-xl text-gray-900">Archives</h1>
+          <div class="actions flex gap-2">
+            <span id="archiveBtn" class="text-gray-500 px-4 py-2 rounded cursor-pointer"><i class="fa-solid fa-ellipsis-vertical fa-lg"></i></span>
+          </div>
+          </div>
+          <div
+          class="search flex justify-center items-center gap-2 border rounded-full"
+        >
+          <svg
+            xmlns="http://www.w3.org/2000/svg"
+            width="24"
+            height="24"
+            viewBox="0 0 24 24"
+          >
+            <path
+              fill=""
+              d="M15.5 14h-.79l-.28-.27A6.47 6.47 0 0 0 16 9.5A6.5 6.5 0 1 0 9.5 16c1.61 0 3.09-.59 4.23-1.57l.27.28v.79l5 4.99L20.49 19zm-6 0C7.01 14 5 11.99 5 9.5S7.01 5 9.5 5S14 7.01 14 9.5S11.99 14 9.5 14"
+            />
+          </svg>
+          <input
+            type="text"
+            name=""
+            id=""
+            class="flex-1 p-1 border-inherit focus:outline-none"
+            placeholder="Recherche"
+          />
+        </div>
+          <hr>
+          <div class="flex flex-col gap-3 my-3">
+            ${archivedGroups
+              .map((g) => {
+                const memberNames = g.members
+                  .map((id) => contacts.find((c) => c.id === id)?.firstName)
+                  .join(", ");
+                return `
+              <div class="group-item flex justify-between gap-3 border p-2 rounded-lg shadow hover:bg-gray-50 transition cursor-pointer" data-id="${
+                g.id
+              }">
+                <div class="flex gap-2">
+                  ${
+                    g.picture
+                      ? `<img src="/assets/${g.picture}" alt="${g.name}" class="w-10 h-10 rounded-full" />`
+                      : `<span class="flex justify-center items-center w-10 h-10 rounded-full bg-gray-200 text-sm font-bold uppercase">${g.name.slice(
+                          0,
+                          2
+                        )}</span>`
+                  }
+                  <div>
+                    <div class="font-medium text-gray-900">${g.name}</div>
+                    <div class="text-xs text-gray-500">${memberNames}</div>
+                  </div>
+                </div>
+                <div class="actions">
+                  <span id="unarchiveBtn" class="text-gray-500"><i class="fa-solid fa-box-archive"></i></span>
+                </div>
+              </div>
+            `;
+              })
               .join("")}
           </div>
         `;
@@ -318,10 +432,10 @@ export function renderContactDetails(contact) {
   //   // Logic to show contact menu
   //   console.log("Show contact menu for:", contact.id);
   // });
-  document.querySelector("#messageMenuBtn").addEventListener("click", () => {
-    // Logic to show message menu
-    console.log("Show message menu for contact:", contact.id);
-  });
+  // document.querySelector("#messageMenuBtn").addEventListener("click", () => {
+  //   // Logic to show message menu
+  //   console.log("Show message menu for contact:", contact.id);
+  // });
   // document.querySelector("#archiveBtn").addEventListener("click", () => {
   //   // Logic to show archive menu
   //   console.log("Show archive menu");
@@ -459,6 +573,7 @@ export function renderGroupDetails(group) {
   document.querySelector("#archiveBtn").addEventListener("click", () => {
     // Logic to archive group
     console.log("Archive group:", group.id);
+    toggleArchiveGroup(group.id);
   });
   // document.querySelector("#btnArchiveGroup").addEventListener("click", () => {
   //   // Logic to archive group
@@ -568,10 +683,6 @@ export function renderAddGroupMembers(groupId, contacts) {
       return;
     }
 
-    group.members.push(...selectedMembers);
-    document.querySelector("#addGroupMessage").textContent =
-      "Membres ajoutés avec succès !";
-
     // Mise à jour du compteur sélectionné
     const checkboxes = document.querySelectorAll(
       "#groupMembers input[type='checkbox']"
@@ -586,86 +697,23 @@ export function renderAddGroupMembers(groupId, contacts) {
         ).textContent = `${selectedCount} membre(s) sélectionné(s)`;
       });
     });
+    group.members.push(...selectedMembers);
+    document.querySelector("#addGroupMessage").textContent =
+      "Membres ajoutés avec succès !";
+    // Optionnel : rediriger ou mettre à jour l'interface utilisateur
+    // setTimeout(() => {
+    //   page.innerHTML = renderGroupsList(groups, contacts);
+    //   groupListeners();
+    //   document
+    //     .getElementById("btnAddGroup")
+    //     .addEventListener("click", loadAddGroupForm);
+    // }, 1000);
+    setTimeout(() => {
+      loadView("groupes"), 1000;
+    });
   });
 }
 
-// export function renderAddGroupMembers(groupId, contacts) {
-//   const page = document.querySelector("#page");
-
-//   // Find the group by ID
-//   const group = groups.find((g) => g.id === groupId);
-//   if (!group) {
-//     page.innerHTML = `<p class="text-gray-500">Groupe non trouvé.</p>`;
-//   }
-//   page.innerHTML = `
-//     <div class="add-group-members p-4  top-28 bg-white shadow-lg rounded-lg">
-//       <form id="addMembers" class="flex flex-col gap-4 p-4 bg-white shadow-lg rounded-lg w-96 mx-auto mt-8">
-//       <h2 class="text-xl font-semibold text-gray-900 mb-4">Ajouter des membres au groupe "${group.name}"</h2>
-//         <label class="block font-medium mb-1">Ajouter des membres :</label>
-//         <div class="error-message text-red-500 text-sm mb-2" data-error-for="member"></div>
-//         <div id="groupMembers" class="flex flex-col gap-2 max-h-full overflow-auto border p-2 rounded bg-gray-50">
-//           ${contacts
-//             .filter((c) => !c.archived && !group.members.includes(c.id))
-//             .map(
-//               (c) => `
-//               <label class="flex items-center gap-3 p-2 border rounded-lg hover:bg-gray-100 cursor-pointer">
-//                 <input type="checkbox" value="${c.id}" />
-//                 ${
-//                   c.avatar
-//                     ? `<img src="/assets/${c.avatar}" alt="${c.profile}" class="w-10 h-10 rounded-full" />`
-//                     : `<span class="flex justify-center items-center w-10 h-10 rounded-full bg-gray-200 text-sm">${c.profile}</span>`
-//                 }
-//                 <span class="font-medium">${c.firstName} ${c.lastName}</span>
-//               </label>
-//             `
-//             )
-//             .join("")}
-//         </div>
-//       </div>
-
-//       <button type="submit"
-//         class="bg-gray-200 text-gray-600 py-2 rounded hover:bg-orange-200 transition">
-//         Créer le groupe
-//       </button>
-
-//       <div id="addGroupMessage" class="text-sm mt-2"></div>
-//     </form>
-
-//     </div>
-//   `;
-
-//   // Add event listener for form submission
-//   const form = document.querySelector("#addMembers");
-//   form.addEventListener("submit", (e) => {
-//     e.preventDefault();
-//     const selectedMembers = Array.from(
-//       form.querySelectorAll('input[type="checkbox"]:checked')
-//     ).map((checkbox) => parseInt(checkbox.value));
-
-//     if (selectedMembers.length === 0) {
-//       showError("member", "Veuillez sélectionner au moins un membre.");
-//       return;
-//     }
-
-//     // Add members to the group
-//     group.members.push(...selectedMembers);
-//     // Show success message
-//     document.querySelector("#addGroupMessage").textContent = "Membres ajoutés avec succès !";
-//     // Optionally, you can redirect or update the UI
-//   });
-//   // Add event listener for checkbox changes
-//   const checkboxes = document.querySelectorAll(
-//     "#groupMembers input[type='checkbox']"
-//   );
-//   checkboxes.forEach((checkbox) => {
-//     checkbox.addEventListener("change", () => {
-//       const selectedCount = Array.from(checkboxes).filter(
-//         (cb) => cb.checked
-//       ).length;
-//       document.querySelector("#addGroupMessage").textContent = `${selectedCount} membre(s) sélectionné(s)`;
-//     });
-//   });
-// }
 
 export function renderMessages(messages) {
   if (!messages || messages.length === 0) {

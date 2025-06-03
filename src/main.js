@@ -3,6 +3,7 @@ import { contacts, groups } from "./data.js";
 import {
   renderAddGroupMembers,
   renderArchived,
+  renderArchivedGroupsEvent,
   renderContactDetails,
   renderContactsList,
   renderGroupDetails,
@@ -14,7 +15,7 @@ document.addEventListener("DOMContentLoaded", initApp);
 
 let selectedContactId = null;
 
-function loadView(view) {
+export function loadView(view) {
   switch (view) {
     case "messages":
       page.innerHTML = `
@@ -44,6 +45,7 @@ function loadView(view) {
     case "archives":
       page.innerHTML = `${renderArchived()}`;
       setupUnarchiveListeners();
+      renderArchivedGroupsEvent(groups);
       break;
 
     case "nouveau":
@@ -57,6 +59,7 @@ function loadView(view) {
 
 function initApp() {
   console.log("app loaded !");
+
   const page = document.querySelector("#page");
   const content = document.querySelector("#content");
 
@@ -242,7 +245,7 @@ function loadAddGroupForm() {
           class="p-2 border border-gray-300 w-full rounded focus:outline-none" />
       </div>
 
-      <div>
+      <div class="overflow-auto max-h-80">
         <label class="block font-medium mb-1">Membres :</label>
         <div class="error-message text-red-500 text-sm mb-2" data-error-for="member"></div>
         <div id="groupMembers" class="flex flex-col gap-2 max-h-full overflow-auto border p-2 rounded bg-gray-50">
@@ -302,6 +305,7 @@ function loadAddGroupForm() {
       name,
       description,
       members: selected,
+      archived: false, // Ajout de l'état d'archivage
     };
 
     groups.push(newGroup);
@@ -309,7 +313,11 @@ function loadAddGroupForm() {
       "✅ Groupe créé avec succès !";
 
     document.getElementById("addGroupForm").reset();
-    page.innerHTML = `${renderGroupsList()}`;
+    // page.innerHTML = `${renderGroupsList(groups, contacts)}`;
+    // groupListeners();
+    //   document
+    //     .getElementById("btnAddGroup")
+    //     .addEventListener("click", loadAddGroupForm);
 
     setTimeout(() => loadView("groupes"), 1000);
   });
@@ -374,6 +382,7 @@ function setupFormHandlers() {
       phoneNumber: `${phone}`,
       profile: getInitials(`${firstName} ${lastName}`),
       color: randomColor(),
+      archived: false, // Ajout de l'état d'archivage
     });
 
     contactForm.reset();
@@ -481,6 +490,14 @@ export function toggleArchive(contactId) {
   }
 }
 
+export function toggleArchiveGroup(groupId) {
+  const group = groups.find((g) => g.id === groupId);
+  if (group) {
+    group.archived = !group.archived;
+    loadView("groupes");
+  }
+}
+
 function setupUnarchiveListeners() {
   document.querySelectorAll("#unarchiveBtn").forEach((btn) => {
     btn.addEventListener("click", (e) => {
@@ -489,6 +506,20 @@ function setupUnarchiveListeners() {
       const contact = contacts.find((c) => c.id === id);
       if (contact) {
         contact.archived = false;
+        loadView("archives");
+      }
+    });
+  });
+}
+
+function setupUnarchiveGroupListeners() {
+  document.querySelectorAll("#unarchiveGroupBtn").forEach((btn) => {
+    btn.addEventListener("click", (e) => {
+      const groupItem = e.target.closest(".group-item");
+      const id = parseInt(groupItem.dataset.id);
+      const group = groups.find((g) => g.id === id);
+      if (group) {
+        group.archived = false;
         loadView("archives");
       }
     });
